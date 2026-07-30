@@ -3,7 +3,7 @@ from unittest.mock import patch, MagicMock
 from django.test import TestCase
 from apps.users.models import User
 from apps.receipts.models import Receipt
-from apps.receipts.services import ReceiptService
+from backend.apps.receipts.services.receipt_services import ReceiptService
 
 
 class ReceiptServiceProcessTests(TestCase):

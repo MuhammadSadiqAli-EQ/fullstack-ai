@@ -1,5 +1,5 @@
 from celery import shared_task
-from .services import ReceiptService
+from .services.receipt_services import ReceiptService
 
 
 @shared_task(bind=True, max_retries=3, default_retry_delay=10)

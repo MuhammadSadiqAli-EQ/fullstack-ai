@@ -2,7 +2,7 @@ import json
 from decimal import Decimal
 from django.conf import settings
 from google import genai
-from .models import Receipt
+from ..models import Receipt
 import re
 
 class ReceiptService:

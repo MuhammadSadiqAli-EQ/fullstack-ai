@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import ReceiptAnalyzeView, ReceiptListView, ReceiptSummaryView, ReceiptStatusView
+from .receipt_api import ReceiptAnalyzeView, ReceiptListView, ReceiptSummaryView, ReceiptStatusView
 
 urlpatterns = [
     path("analyze/", ReceiptAnalyzeView.as_view(), name="receipt-analyze"),

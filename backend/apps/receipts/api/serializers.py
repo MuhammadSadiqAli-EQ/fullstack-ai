@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Receipt
+from ..models import Receipt
 
 
 class ReceiptUploadSerializer(serializers.Serializer):

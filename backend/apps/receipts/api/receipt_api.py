@@ -5,9 +5,9 @@ from rest_framework import status
 from django.db.models import Count, Sum
 from drf_yasg.utils import swagger_auto_schema
 from utils.response.resp import APIResponse
-from .models import Receipt
+from ..models import Receipt
 from .serializers import ReceiptUploadSerializer, ReceiptStatusSerializer, ReceiptListSerializer
-from .tasks import process_receipt_task
+from ..tasks import process_receipt_task
 from rest_framework.response import Response
 
 
