@@ -36,3 +36,6 @@ COPY . /app/
 
 # Expose the port the app will run on
 EXPOSE 8000
+
+# # Run migrations, collect static files, then start the server
+CMD python manage.py migrate && python manage.py collectstatic --noinput && gunicorn core.wsgi:application --bind 0.0.0.0:8000
