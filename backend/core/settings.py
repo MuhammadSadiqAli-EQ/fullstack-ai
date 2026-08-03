@@ -267,7 +267,8 @@ CELERY_BROKER_URL = env("CELERY_BROKER_URL", default=None)
 CELERY_RESULT_BACKEND = env("CELERY_RESULT_BACKEND", default=None)
 
 # set the celery timezone
-CELERY_TIMEZONE = "UTC"
+CELERY_TIMEZONE = "Asia/Karachi"
+CELERY_ENABLE_UTC = False
 DJANGO_CELERY_BEAT_TZ_AWARE = False  # TODO: need to check tz schedules
 
 ALIVENESS_URL = "/healthcheck/"
