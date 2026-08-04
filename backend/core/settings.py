@@ -62,6 +62,8 @@ LOCAL_APPS = [
     "apps.receipts"
 ]
 THIRD_PARTY_APPS = [
+    "cloudinary_storage",
+    "cloudinary",
     "rest_framework",
     "drf_yasg",
     "corsheaders",
@@ -161,11 +163,16 @@ EMAIL_TEMPLATES_DIR = os.path.join(TEMPLATES_DIR, "emails")
 
 STORAGES = {
     "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
     },
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
+}
+CLOUDINARY_STORAGE = {
+    "CLOUD_NAME": env("CLOUDINARY_CLOUD_NAME"),
+    "API_KEY": env("CLOUDINARY_API_KEY"),
+    "API_SECRET": env("CLOUDINARY_API_SECRET"),
 }
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
