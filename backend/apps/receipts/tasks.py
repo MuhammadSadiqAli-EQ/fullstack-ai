@@ -1,7 +1,7 @@
 from celery import shared_task
 from .services.receipt_services import ReceiptService
 from django.contrib.auth import get_user_model
-from .services.aggregation_service import get_aggregation
+from .services.aggregation_service import ReceiptAggregationService
 from django.utils import timezone
 import logging
 
@@ -28,7 +28,8 @@ def daily_receipt_aggregation(self):
         
         for user in users:
             try:
-                result = get_aggregation(user, date=today)
+                service = ReceiptAggregationService(user, date = today)
+                result = service.get_aggregation()
                 print(
                     f"[{result['date']}] User: {result['user']} | "
                     f"Total Spent: {result['total_amount']} | "

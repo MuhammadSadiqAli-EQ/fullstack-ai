@@ -5,14 +5,14 @@
  * - Access token: Saved in-memory (JS variable). Safest route to prevent XSS sniffing.
  * - Refresh token: Saved in HttpOnly cookie by backend. JS has no access to it.
  */
-
+import Cookies from "js-cookie";
 import { apiFetch } from "./api";
 import type { AuthData, AuthTokens } from "./types";
 
 // ─── Token storage (In-memory) ───────────────────────────────────
 
 let memoryAccessToken: string | null = null;
-let memoryRefreshToken: string | null = null;
+
 
 export function getAccessToken(): string | null {
   return memoryAccessToken;
@@ -20,12 +20,16 @@ export function getAccessToken(): string | null {
 
 export function storeTokens(tokens: AuthTokens): void {
   memoryAccessToken = tokens.access;
-  memoryRefreshToken = tokens.refresh;
+  Cookies.set("memoryRefreshToken", tokens.refresh, {
+    expires: 7,
+    secure: true,
+    sameSite: "strict",
+  });
 }
 
 export function clearTokens(): void {
   memoryAccessToken = null;
-  memoryRefreshToken = null;
+  Cookies.remove("memoryRefreshToken");
 }
 
 // ─── Auth operations ─────────────────────────────────────────────
@@ -59,8 +63,8 @@ export async function signup(
  * Used after a page reload wipes the in-memory access token.
  */
 export async function refreshAccessToken(): Promise<string | null> {
-  if (!memoryRefreshToken) return null;
-
+  const memoryRefreshToken  = Cookies.get("memoryRefreshToken");
+  if (!memoryRefreshToken ) return null;
   try {
     const data = await apiFetch<AuthData>("/auth/token/refresh/", {
       method: "POST",
