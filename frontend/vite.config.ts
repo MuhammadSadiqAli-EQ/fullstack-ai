@@ -5,11 +5,7 @@ import { defineConfig } from "vite";
 import { cloudflare } from "@cloudflare/vite-plugin";
 
 export default defineConfig({
-  plugins: [tailwindcss(), reactRouter(), cloudflare({
-    viteEnvironment: {
-      name: "ssr"
-    }
-  })],
+  plugins: [tailwindcss(), reactRouter(), cloudflare()],
   resolve: {
     tsconfigPaths: true,
   },
