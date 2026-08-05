@@ -82,6 +82,26 @@ When a model changes, generate migrations with Django's `manage.py makemigration
 - Run the relevant tests while developing, then run the full backend suite to detect regressions.
 - Maintain at least 90% coverage for new or changed backend code. Use `python -m pytest --cov=apps --cov=utils --cov-report=term-missing` to find untested paths; coverage percentage does not replace meaningful assertions.
 
+
+## Lessons from code review (avoid repeating these)
+
+1. **Never commit env files.** `.env`, `.env.local`, or any file with actual environment
+   values must not be tracked by git. Only `.env.example` with placeholder values gets committed.
+   Always check `git status` before committing to confirm no env files are staged.
+
+2. **Imports go at the top of the file.** Never write imports mid file, like inside a function
+   or after other code. All imports belong at the top, right after the module docstring if any.
+
+3. **Follow existing file naming and folder conventions.**
+   - API views/serializers/urls go inside `api/` folder for that app, not loose in app root.
+   - Service layer files go inside `services/` folder, named `<feature>_service.py`
+     (e.g. `receipt_service.py`, not `receipt_api.py` or `receipt.py`).
+   - Match the naming pattern of files already in the app before creating new ones.
+
+4. **Check folder structure of similar existing apps before adding new files.** If unsure where
+   something goes, look at how `authentications` or `users` app is structured and follow the same
+   pattern.
+   
 ## Cursor Cloud specific instructions
 This is a **Django REST Framework backend boilerplate** (project package `core`, apps under `backend/apps/`) plus a **Next.js React frontend** under `frontend/`. The backend intentionally ships with only two apps: `apps/users` (custom `User` + `Organization` models and admin APIs) and `apps/authentications` (JWT signup/login/password endpoints). Everything else is generic infra under `utils/` and `core/`. Build new backend features by adding apps (see below). The startup update script creates/refreshes the backend `venv` and installs `backend/requirements.txt`; use that interpreter directly (`backend/venv/bin/python`, `backend/venv/bin/ruff`, `backend/venv/bin/pytest`). The conda instructions above are for the original author's Mac and do not apply here.
 
