@@ -1,12 +1,7 @@
 {
-  "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "frontendreceiptanalyzer",
-  "compatibility_date": "2026-08-03",
-  "observability": {
-    "enabled": true
-  },
-  "main": "./workers/app.ts",
-  "compatibility_flags": [
-    "nodejs_compat"
-  ]
+  "name": "Sadiq",
+  "compatibility_date": "2026-08-05",
+  "assets": {
+    "directory": "./build/client"
+  }
 }
