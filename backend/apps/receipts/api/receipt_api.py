@@ -9,6 +9,7 @@ from ..models import Receipt
 from .serializers import ReceiptUploadSerializer, ReceiptStatusSerializer, ReceiptListSerializer
 from ..tasks import process_receipt_task
 from rest_framework.response import Response
+from ..services.aggregation_service import ReceiptAggregationService
 
 
 class ReceiptAnalyzeView(APIView):
@@ -64,15 +65,13 @@ class ReceiptSummaryView(APIView):
                               "Requires authentication. Only counts receipts owned by the caller.",
     )
     def get(self, request):
-        result = Receipt.objects.filter(user=request.user).aggregate(
-            total_count=Count("id"),
-            total_sum=Sum("total_amount"),
-        )
+        service =  ReceiptAggregationService(request.user)
+        result = service.get_aggregation()
         body = APIResponse.get_response(
             message="Summary fetched successfully",
             data={
-                "total_count": result["total_count"] or 0,
-                "total_sum": result["total_sum"] or 0,
+                "total_count": result["receipt_count"],
+                "total_sum": result["total_amount"],
             }
         )
         return Response(body, status=status.HTTP_200_OK)
