@@ -3,7 +3,7 @@ import { Navigate, Outlet } from "react-router";
 import type { LoaderFunctionArgs } from "react-router";
 import { getAccessToken } from "~/lib/auth";
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function clientLoader({ request }: LoaderFunctionArgs) {
   const token = getAccessToken();
 
   if (!token) {
