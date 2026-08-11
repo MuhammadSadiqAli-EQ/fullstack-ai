@@ -77,3 +77,13 @@ export async function refreshAccessToken(): Promise<string | null> {
     return null;
   }
 }
+
+/**
+ * Returns a valid access token, trying memory first then refresh token.
+ * Used by route loaders to check auth status.
+ */
+export async function getValidAccessToken(): Promise<string | null> {
+  const token = getAccessToken();
+  if (token) return token;
+  return await refreshAccessToken();
+}

@@ -1,10 +1,10 @@
 // routes/protected-layout.tsx
 import { Navigate, Outlet } from "react-router";
 import type { LoaderFunctionArgs } from "react-router";
-import { getAccessToken } from "~/lib/auth";
+import { getValidAccessToken } from "~/lib/auth";
 
 export async function clientLoader({ request }: LoaderFunctionArgs) {
-  const token = getAccessToken();
+  const token = await getValidAccessToken();
 
   if (!token) {
     throw new Response("Unauthorized", { status: 401 });
