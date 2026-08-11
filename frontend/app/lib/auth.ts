@@ -3,29 +3,40 @@
  *
  * Pattern:
  * - Access token: Saved in-memory (JS variable). Safest route to prevent XSS sniffing.
- * - Refresh token: Saved in HttpOnly cookie by backend. JS has no access to it.
+ * - Refresh token: Saved in Cookie by using js-cookie. JS has access to it.
  */
-
+import Cookies from "js-cookie";
 import { apiFetch } from "./api";
 import type { AuthData, AuthTokens } from "./types";
 
 // ─── Token storage (In-memory) ───────────────────────────────────
 
 let memoryAccessToken: string | null = null;
-let memoryRefreshToken: string | null = null;
 
 export function getAccessToken(): string | null {
   return memoryAccessToken;
 }
 
+export function getRefreshToken(): string | null {
+  const memoryRefreshToken = Cookies.get("memoryRefreshToken");
+  if (memoryRefreshToken){
+    return memoryRefreshToken;
+  }
+  return null;
+}
+
 export function storeTokens(tokens: AuthTokens): void {
   memoryAccessToken = tokens.access;
-  memoryRefreshToken = tokens.refresh
+  Cookies.set("memoryRefreshToken", tokens.refresh, {
+    expires: 7,
+    secure: true,
+    sameSite: "strict",
+  });
 }
 
 export function clearTokens(): void {
   memoryAccessToken = null;
-  memoryRefreshToken = null;
+  Cookies.remove("memoryRefreshToken");
 }
 
 // ─── Auth operations ─────────────────────────────────────────────
@@ -63,9 +74,10 @@ export async function signup(
  * Attempts to get a fresh access token using the stored refresh token.
  * Used after a page reload wipes the in-memory access token.
  */
-export async function refreshAccessToken(): Promise<string | null> {
-  if (!memoryRefreshToken) return null;
 
+export async function refreshAccessToken(): Promise<string | null> {
+  const memoryRefreshToken  = getRefreshToken();
+  if (!memoryRefreshToken ) return null;
   try {
     const data = await apiFetch<AuthData>("/auth/token/refresh/", {
       method: "POST",
@@ -77,4 +89,14 @@ export async function refreshAccessToken(): Promise<string | null> {
     clearTokens();
     return null;
   }
+}
+
+/**
+ * Returns a valid access token, trying memory first then refresh token.
+ * Used by route loaders to check auth status.
+ */
+export async function getValidAccessToken(): Promise<string | null> {
+  const token = getAccessToken();
+  if (token) return token;
+  return await refreshAccessToken();
 }
