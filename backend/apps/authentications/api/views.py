@@ -8,6 +8,8 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.conf import settings
+from django.core.mail import send_mail
 
 from apps.authentications.api.serializers import (
     AuthenticationChangePasswordSerializer,
@@ -16,6 +18,7 @@ from apps.authentications.api.serializers import (
     SignUpSerializer,
     TokenRefreshSerializer,
     UserLoginSerializer,
+    ForgotPasswordSerializer,
 )
 from apps.users.models import User
 from utils import utils
@@ -112,7 +115,8 @@ class ResetPasswordAPI(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        user_id = data.get("user_id")
+        user_id = data.user_id
+        data.used = True
         user = get_object_or_404(User, id=user_id)
 
         # Set new password and clear password reset requirement
@@ -168,4 +172,46 @@ class SignUpAPIView(APIView):
         return Response(
             APIResponse.get_response(message="User created successfully.", data=data),
             status=status.HTTP_201_CREATED,
+        )
+
+
+class ForgotPasswordAPI(APIView):
+    permission_classes = (AllowAny,)
+    """
+    Handles forgot password request, sends reset email if user exists.
+    """
+
+    @swagger_auto_schema(request_body=ForgotPasswordSerializer)
+    def post(self, request):
+        serializer = ForgotPasswordSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        email = serializer.validated_data["email"].lower()
+
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            # Don't reveal whether email exists, always return success
+            return Response(
+                APIResponse.get_response(
+                    message="If an account exists with this email, a reset link has been sent.",
+                ),
+                status=status.HTTP_200_OK,
+            )
+
+        token = utils.generate_token(user.id) # returns token
+        reset_url = f"{settings.FRONTEND_URL}/reset-password?token={token}"
+
+        send_mail(
+            subject="Reset your password",
+            message=f"Click here to reset your password: {reset_url}",
+            from_email=None,
+            recipient_list=[user.email],
+        )
+
+        return Response(
+            APIResponse.get_response(
+                message="If an account exists with this email, a reset link has been sent.",
+            ),
+            status=status.HTTP_200_OK,
         )

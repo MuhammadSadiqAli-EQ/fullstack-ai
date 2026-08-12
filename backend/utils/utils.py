@@ -8,6 +8,7 @@ from django.utils.dateparse import parse_date
 
 from utils.exceptions.errors import DatesError
 from utils.exceptions.exceptions import CoreException
+from apps.users.models import PasswordResetToken
 
 
 def _to_decimal(value, *, field_name: str) -> Decimal:
@@ -136,3 +137,21 @@ def get_formatted_current_datetime(format="%Y-%m-%d %H:%M:%S") -> str:
 def generate_password(length=12):
     characters = string.ascii_letters + string.digits
     return "".join(secrets.choice(characters) for _ in range(length))
+
+def generate_token(user_id : int):
+    length = 64
+    characters = string.ascii_letters + string.digits
+    token = "".join(secrets.choice(characters) for _ in range(length))
+    PasswordResetToken.objects.create(
+        user_id=user_id,
+        token=token,
+        expires_at=timezone.now() + timedelta(minutes=30),
+    )
+    return token
+
+def validate_token(token):
+    try:
+        return PasswordResetToken.objects.get(token=token, used=False, expires_at__gt=timezone.now())
+    
+    except PasswordResetToken.DoesNotExist:
+        return None

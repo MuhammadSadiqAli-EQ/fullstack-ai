@@ -19,6 +19,7 @@ class User(AbstractUser, BaseModel):
     first_name = None
     last_name = None
     username = None
+    pwd_reset_required = models.BooleanField(default=False)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
@@ -33,3 +34,10 @@ class User(AbstractUser, BaseModel):
 
 class Organization(BaseModel):
     name = models.CharField(max_length=255)
+
+
+class PasswordResetToken(BaseModel):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reset_tokens")
+    token = models.CharField(max_length=255, unique=True)
+    expires_at = models.DateTimeField()
+    used = models.BooleanField(default=False)

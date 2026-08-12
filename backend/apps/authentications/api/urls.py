@@ -7,6 +7,7 @@ from apps.authentications.api.views import (
     RefreshTokenAPIView,
     ResetPasswordAPI,
     SignUpAPIView,
+    ForgotPasswordAPI,
 )
 
 urlpatterns = [
@@ -16,4 +17,5 @@ urlpatterns = [
     path("reset-password/", ResetPasswordAPI.as_view()),
     path("signup/", SignUpAPIView.as_view(), name="signup_api"),
     path("change-password/", ChangePasswordAPI.as_view(), name="change_password"),
+    path("forgot-password/", ForgotPasswordAPI.as_view(), name="forgot_password")
 ]
