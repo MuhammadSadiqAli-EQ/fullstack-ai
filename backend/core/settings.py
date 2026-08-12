@@ -278,6 +278,16 @@ CELERY_TIMEZONE = "Asia/Karachi"
 CELERY_ENABLE_UTC = False
 DJANGO_CELERY_BEAT_TZ_AWARE = False  # TODO: need to check tz schedules
 
+
+# SMTP Settings
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = env("EMAIL_HOST", default="smtp.gmail.com")
+EMAIL_PORT = env.int("EMAIL_PORT", default=587)
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = env("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
+DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL")
+
 ALIVENESS_URL = "/healthcheck/"
 
 CORS_ALLOW_ALL_ORIGINS = True

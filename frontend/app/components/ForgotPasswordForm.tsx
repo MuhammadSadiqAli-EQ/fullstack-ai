@@ -1,5 +1,5 @@
 /**
- * LoginForm — presentational component for the login page.
+ * ForgotPasswordForm — presentational component for the Forgot page.
  *
  * All mutation logic lives in the route's clientAction.
  * This component just renders the form UI and displays errors.
@@ -10,16 +10,17 @@ import { CenteredPageLayout } from "~/components/layout/CenteredPageLayout";
 import { TextField } from "~/components/ui/TextField";
 import { Button } from "./ui/Button";
 
-interface LoginFormProps {
+interface ForgotPasswordFormProps {
   error?: string;
+  message?: string;
   isSubmitting: boolean;
 }
 
-export function LoginForm({ error, isSubmitting }: LoginFormProps) {
+export function ForgotPasswordForm({ error, message, isSubmitting }: ForgotPasswordFormProps) {
   return (
     <CenteredPageLayout>
       <h1 className="mb-6 text-xl font-semibold text-gray-900 dark:text-gray-100">
-        Log in
+        Forgot Password
       </h1>
 
       <Form method="post" className="space-y-4">
@@ -30,20 +31,15 @@ export function LoginForm({ error, isSubmitting }: LoginFormProps) {
           required
           autoComplete="email"
         />
-        <TextField
-          label="Password"
-          name="password"
-          type="password"
-          required
-          autoComplete="current-password"
-        />
-
+        {message && (
+          <p className="text-sm text-green-600 dark:text-green-400">{message}</p>
+        )}
         {error && (
           <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
         )}
 
         <Button type="submit" disabled={isSubmitting} className="w-full">
-          {isSubmitting ? "Logging in…" : "Log in"}
+          {isSubmitting ? "Submitting" : "Submit"}
         </Button>
       </Form>
 
@@ -54,14 +50,6 @@ export function LoginForm({ error, isSubmitting }: LoginFormProps) {
           className="font-semibold text-gray-900 hover:underline dark:text-gray-100"
         >
           Sign up
-        </Link>
-      </p>
-      <p className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
-        <Link
-          to="/forgot-password"
-          className="font-semibold text-gray-900 hover:underline dark:text-gray-100"
-        >
-          Forgot Password?
         </Link>
       </p>
     </CenteredPageLayout>

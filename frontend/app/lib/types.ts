@@ -54,3 +54,12 @@ export interface ReceiptSummary {
   total_count: number;
   total_sum: number;
 }
+
+export interface EmailMessage {
+  message: string;
+}
+
+export interface ResetMessage {
+  message: string;
+  error: string | null;
+}
