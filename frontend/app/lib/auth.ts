@@ -64,17 +64,35 @@ export async function signup(
  */
 export async function refreshAccessToken(): Promise<string | null> {
   const memoryRefreshToken  = Cookies.get("memoryRefreshToken");
-  if (!memoryRefreshToken ) return null;
+  if (!memoryRefreshToken || isTokenExpired(memoryRefreshToken)) {
+    clearTokens();
+    return null;
+  }
   try {
     const data = await apiFetch<AuthData>("/auth/token/refresh/", {
       method: "POST",
       body: { refresh: memoryRefreshToken },
     });
     memoryAccessToken = data.token.access;
+    if (data.token.refresh) {
+      Cookies.set("memoryRefreshToken", data.token.refresh);
+    }
     return memoryAccessToken;
   } catch {
     clearTokens();
     return null;
+  }
+}
+
+/**
+ * Check if the stored token is expired or not
+ */
+function isTokenExpired(token: string): boolean {
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.exp * 1000 < Date.now();
+  } catch {
+    return true;
   }
 }
 
@@ -84,6 +102,6 @@ export async function refreshAccessToken(): Promise<string | null> {
  */
 export async function getValidAccessToken(): Promise<string | null> {
   const token = getAccessToken();
-  if (token) return token;
+  if (token && !isTokenExpired(token)) return token;
   return await refreshAccessToken();
 }
