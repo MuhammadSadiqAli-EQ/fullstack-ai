@@ -28,7 +28,7 @@ export function getRefreshToken(): string | null {
 export function storeTokens(tokens: AuthTokens): void {
   memoryAccessToken = tokens.access;
   Cookies.set("memoryRefreshToken", tokens.refresh, {
-    expires: 7,
+    expires: 1,
     secure: true,
     sameSite: "strict",
   });
