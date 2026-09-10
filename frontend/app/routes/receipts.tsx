@@ -6,6 +6,7 @@ import { ReceiptUploadForm } from "~/components/ReceiptUploadForm";
 import { ReceiptSummaryCards } from "~/components/ReceiptSummaryCards";
 import { ReceiptsTable } from "~/components/ReceiptsTable";
 import type { Route } from "./+types/receipts";
+import { GeneralErrorBoundary } from "~/components/error-boundary";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -73,4 +74,8 @@ export function shouldRevalidate({ currentUrl, nextUrl, defaultShouldRevalidate 
   }
 
   return defaultShouldRevalidate;
+}
+
+export function ErrorBoundary() {
+	return <GeneralErrorBoundary />
 }
